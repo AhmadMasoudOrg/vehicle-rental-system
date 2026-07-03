@@ -1,5 +1,5 @@
 package najah.stu.ui;
-
+import najah.stu.ui.*;
 import javax.swing.*;
 
 public class ManagerDashboard extends JFrame {
@@ -21,10 +21,18 @@ public class ManagerDashboard extends JFrame {
 
         viewVehiclesButton = new JButton("View Available Vehicles");
         viewVehiclesButton.setBounds(80,70,220,35);
+        viewVehiclesButton.addActionListener(e -> {
+        new VehicleList();
+        });
         add(viewVehiclesButton);
 
         logoutButton = new JButton("Logout");
         logoutButton.setBounds(80,130,220,35);
+        logoutButton.addActionListener(e ->{
+            JOptionPane.showMessageDialog(this, "Logout Successful");
+            dispose();
+            new Login();
+        });
         add(logoutButton);
 
         setVisible(true);
