@@ -1,5 +1,4 @@
 package najah.stu.ui;
-import najah.stu.ui.*;
 import javax.swing.*;
 
 public class ManagerDashboard extends JFrame {
