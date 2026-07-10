@@ -2,17 +2,6 @@ package najah.stu.domain;
 
 import java.time.LocalDate;
 
-
-
-
-
-
-
-
-
-
-
-
 public class Rental {
     private int id;
     private int vehicleId;

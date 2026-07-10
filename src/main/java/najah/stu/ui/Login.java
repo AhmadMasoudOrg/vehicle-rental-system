@@ -47,15 +47,29 @@ public class Login extends JFrame {
             String password = new String(passwordField.getPassword());
 
             if (managerService.login(username, password)) {
-                dispose();
-                new ManagerDashboard();
-                 JOptionPane.showMessageDialog(this, "Login Successful");
+
+            JOptionPane.showMessageDialog(
+            this,
+            "Login Successful",
+            "Success",
+            JOptionPane.INFORMATION_MESSAGE
+            );
+
+            dispose();
+            new ManagerDashboard(managerService);
+
             } else {
-                JOptionPane.showMessageDialog(this, "Invalid Username or Password");
+
+            JOptionPane.showMessageDialog(
+            this,
+            "Invalid Username or Password",
+            "Login Failed",
+            JOptionPane.ERROR_MESSAGE
+             );
             }
 
         });
 
         setVisible(true);
-    }
+        }
 }
