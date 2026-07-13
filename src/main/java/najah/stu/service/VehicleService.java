@@ -8,10 +8,10 @@ import najah.stu.repository.VehicleRepository;
 
 public class VehicleService {
 
-    private VehicleRepository repository;
+    private final VehicleRepository repository;
 
-    public VehicleService() {
-        repository = new VehicleRepository();
+    public VehicleService(VehicleRepository repository) {
+        this.repository = repository;
     }
 
     public List<Vehicle> getAvailableVehicles() {
@@ -19,11 +19,9 @@ public class VehicleService {
         List<Vehicle> availableVehicles = new ArrayList<>();
 
         for (Vehicle vehicle : repository.getAllVehicles()) {
-
             if (vehicle.isAvailable()) {
                 availableVehicles.add(vehicle);
             }
-
         }
 
         return availableVehicles;

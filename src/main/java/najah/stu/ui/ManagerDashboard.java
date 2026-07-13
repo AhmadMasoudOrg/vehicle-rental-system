@@ -2,7 +2,9 @@ package najah.stu.ui;
 
 import javax.swing.*;
 
+import najah.stu.repository.VehicleRepository;
 import najah.stu.service.ManagerService;
+import najah.stu.service.VehicleService;
 
 public class ManagerDashboard extends JFrame {
 
@@ -31,7 +33,7 @@ public class ManagerDashboard extends JFrame {
         viewVehiclesButton.setBounds(80, 70, 220, 35);
 
         viewVehiclesButton.addActionListener(e -> {
-            new VehicleList();
+            new VehicleList(new VehicleService(new VehicleRepository()));
         });
 
         add(viewVehiclesButton);

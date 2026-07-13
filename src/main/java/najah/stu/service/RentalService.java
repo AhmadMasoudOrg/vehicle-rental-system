@@ -24,18 +24,18 @@ public class RentalService {
     
     private final VehicleRepository vehicleRepository;
     private final RentalRepository rentalRepository;
-    private final ManagerService managerService;
+    private final CustomerService customerService;
 
     public RentalService() {
-        this(new VehicleRepository(), new RentalRepository(), new ManagerService());
+        this(new VehicleRepository(), new RentalRepository(), new CustomerService());
     }
 
     public RentalService(VehicleRepository vehicleRepository,
                           RentalRepository rentalRepository,
-                          ManagerService managerService) {
+                          CustomerService customerService) {
         this.vehicleRepository = vehicleRepository;
         this.rentalRepository = rentalRepository;
-        this.managerService = managerService;
+        this.customerService = customerService;
     }
 
     
@@ -44,7 +44,7 @@ public class RentalService {
     
     public Rental rentVehicle(int vehicleId, String customerName, LocalDate startDate, LocalDate endDate) {
 
-        managerService.requireLogin();
+        customerService.requireLogin();
 
         if (customerName == null || customerName.trim().isEmpty()) {
             throw new IllegalArgumentException("Customer name must not be empty.");
@@ -64,13 +64,14 @@ public class RentalService {
         rentalRepository.save(rental);
 
         vehicle.markAsRented();
+        vehicleRepository.saveChanges();
 
         return rental;
     }
 
     public Rental returnVehicle(int rentalId) {
 
-        managerService.requireLogin();
+        customerService.requireLogin();
 
         Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new IllegalArgumentException("Rental not found with id: " + rentalId));
@@ -81,8 +82,17 @@ public class RentalService {
 
         rental.setStatus(najah.stu.domain.RentalStatus.RETURNED);
 
-        vehicleRepository.findById(rental.getVehicleId())
-                .ifPresent(Vehicle::markAsAvailable);
+        Vehicle vehicle = vehicleRepository
+        .findById(rental.getVehicleId())
+        .orElseThrow(() ->
+                new VehicleNotFoundException(
+                        "Vehicle not found with id: "
+                                + rental.getVehicleId()
+                )
+        );
+
+vehicle.markAsAvailable();
+vehicleRepository.saveChanges();
 
         return rental;
     }
