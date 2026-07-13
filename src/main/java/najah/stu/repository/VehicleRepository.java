@@ -1,9 +1,13 @@
 package najah.stu.repository;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 import najah.stu.domain.Vehicle;
+
+
+
+
+
 
 public class VehicleRepository {
 
@@ -21,5 +25,11 @@ public class VehicleRepository {
 
     public List<Vehicle> getAllVehicles() {
         return vehicles;
+    }
+
+    public Optional<Vehicle> findById(int id) {
+        return vehicles.stream()
+                .filter(vehicle -> vehicle.getId() == id)
+                .findFirst();
     }
 }
