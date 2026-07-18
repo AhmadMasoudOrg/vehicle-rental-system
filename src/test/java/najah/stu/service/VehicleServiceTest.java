@@ -32,9 +32,10 @@ class VehicleServiceTest {
 
     @Test
     void getAvailableVehiclesShouldOnlyReturnAvailableOnes() {
-        Vehicle available1 = new Vehicle(1, "Toyota", "Corolla", true);
-        Vehicle rented = new Vehicle(2, "Honda", "Civic", false);
-        Vehicle available2 = new Vehicle(3, "Kia", "Sportage", true);
+        Vehicle available1 = new Vehicle(1, "Toyota", "Corolla", true, 40.0);
+        Vehicle rented = new Vehicle(2, "Honda", "Civic", false, 50.0);
+        Vehicle available2 = new Vehicle(3, "Kia", "Sportage", true, 60.0);
+        
         List<Vehicle> allVehicles = new ArrayList<>();
         allVehicles.add(available1);
         allVehicles.add(rented);
@@ -53,8 +54,8 @@ class VehicleServiceTest {
     
     @Test
     void getAvailableVehiclesShouldReturnEmptyListWhenAllVehiclesAreRented() {
-        Vehicle rented1 = new Vehicle(1, "Toyota", "Corolla", false);
-        Vehicle rented2 = new Vehicle(2, "Honda", "Civic", false);
+        Vehicle rented1 = new Vehicle(1, "Toyota", "Corolla", false, 40.0);
+        Vehicle rented2 = new Vehicle(2, "Honda", "Civic", false, 50.0);
 
         List<Vehicle> allVehicles = new ArrayList<>();
         allVehicles.add(rented1);
@@ -68,7 +69,7 @@ class VehicleServiceTest {
     }
     @Test
     void getAvailableVehiclesShouldMarkVehicleUnavailableAfterMarkAsRented() {
-        Vehicle vehicle = new Vehicle(1, "Toyota", "Corolla", true);
+        Vehicle vehicle = new Vehicle(1, "Toyota", "Corolla", true, 40.0);
         vehicle.markAsRented();
         List<Vehicle> allVehicles = new ArrayList<>();
         allVehicles.add(vehicle);

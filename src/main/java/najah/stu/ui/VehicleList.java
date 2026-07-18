@@ -22,31 +22,36 @@ public class VehicleList extends JFrame {
     public VehicleList(VehicleService vehicleService) {
 
         setTitle("Available Vehicles");
-        setSize(600, 400);
+        setSize(700,400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(10,10));
 
         model = new DefaultTableModel(
-                new Object[]{"ID", "Brand", "Model"},
+                new Object[]{"ID","Brand","Model","Type","Daily Rate"},
                 0
         ) {
+
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int row,int column) {
+
                 return false;
             }
         };
 
-        List<Vehicle> vehicles =
-                vehicleService.getAvailableVehicles();
+        List<Vehicle> vehicles = vehicleService.getAvailableVehicles();
 
         for (Vehicle vehicle : vehicles) {
 
-            model.addRow(new Object[]{
-                    vehicle.getId(),
-                    vehicle.getBrand(),
-                    vehicle.getModel()
-            });
+            model.addRow(
+                    new Object[]{
+                            vehicle.getId(),
+                            vehicle.getBrand(),
+                            vehicle.getModel(),
+                            vehicle.getType(),
+                            vehicle.getDailyRate()
+                    }
+            );
         }
 
         table = new JTable(model);
@@ -61,6 +66,7 @@ public class VehicleList extends JFrame {
         closeButton.addActionListener(e -> dispose());
 
         JPanel buttonPanel = new JPanel();
+
         buttonPanel.add(closeButton);
 
         add(

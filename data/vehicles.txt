@@ -1,5 +1,5 @@
-1,Toyota,Corolla,false
-2,Hyundai,Tucson,false
-3,Kia,Sportage,true
-4,BMW,X5,true
-5,Mercedes,C200,true
+1,Toyota,Corolla,true,40.0
+2,Hyundai,Tucson,true,100.0
+3,Kia,Sportage,true,50.0
+4,BMW,X5,true,60.0
+5,Mercedes,C200,true,70.0

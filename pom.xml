@@ -20,6 +20,20 @@
 
   <dependencies>
 
+<dependency>
+    <groupId>net.bytebuddy</groupId>
+    <artifactId>byte-buddy</artifactId>
+    <version>1.17.0</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>net.bytebuddy</groupId>
+    <artifactId>byte-buddy-agent</artifactId>
+    <version>1.17.0</version>
+    <scope>test</scope>
+</dependency>
+
   <dependency>
     <groupId>org.junit.jupiter</groupId>
     <artifactId>junit-jupiter</artifactId>
@@ -55,7 +69,15 @@
         <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.12</version>
+            <version>0.8.14</version>
+
+            <configuration>
+                <excludes>
+            <exclude>najah/stu/ui/**</exclude>
+            <exclude>najah/stu/app/**</exclude>
+                </excludes>
+          </configuration>
+
             <executions>
                 <execution>
                     <goals>
@@ -70,6 +92,7 @@
                     </goals>
                 </execution>
             </executions>
+
         </plugin>
     </plugins>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->

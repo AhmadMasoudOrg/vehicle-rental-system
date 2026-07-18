@@ -2,97 +2,163 @@ package najah.stu.service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 import najah.stu.domain.Rental;
 import najah.stu.notification.NotificationService;
+import najah.stu.observer.EmailNotificationObserver;
+import najah.stu.observer.NotificationObserver;
 
+/**
+ * Sends reminders for rentals that are close to their end date.
+ *
+ * This service uses the Observer Pattern to notify all registered
+ * notification observers.
+ */
 public class RentalReminderService {
 
     private static final long REMINDER_DAYS = 2;
 
-    private final NotificationService notificationService;
+    private final List<NotificationObserver> observers;
 
-    public RentalReminderService(
-            NotificationService notificationService) {
+    /**
+     * Creates a rental reminder service.
+     *
+     * An email observer is registered automatically.
+     *
+     * @param notificationService service used to send notifications
+     * @throws IllegalArgumentException if the notification service is null
+     */
+    public RentalReminderService(NotificationService notificationService) {
 
         if (notificationService == null) {
-            throw new IllegalArgumentException(
-                    "Notification service is required."
-            );
+            throw new IllegalArgumentException("Notification service is required.");
         }
 
-        this.notificationService = notificationService;
+        observers = new ArrayList<>();
+
+        addObserver(new EmailNotificationObserver(notificationService));
     }
 
-    public boolean sendExpiryReminder(
-            Rental rental,
-            String customerEmail) {
+    /**
+     * Adds a notification observer.
+     *
+     * The observer is added only when it is not already registered.
+     *
+     * @param observer observer to add
+     * @throws IllegalArgumentException if the observer is null
+     */
+    public void addObserver(NotificationObserver observer) {
 
-        return sendExpiryReminder(
-                rental,
-                customerEmail,
-                LocalDate.now()
-        );
+        if (observer == null) {
+            throw new IllegalArgumentException("Observer is required.");
+        }
+
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
     }
 
-    public boolean sendExpiryReminder(
-            Rental rental,
-            String customerEmail,
-            LocalDate currentDate) {
+    /**
+     * Removes a notification observer.
+     *
+     * @param observer observer to remove
+     */
+    public void removeObserver(NotificationObserver observer) {
 
-        validateInput(
-                rental,
-                customerEmail,
-                currentDate
-        );
+        observers.remove(observer);
+    }
+
+    /**
+     * Sends a notification to all registered observers.
+     *
+     * @param recipient notification recipient
+     * @param subject notification subject
+     * @param message notification message
+     */
+    private void notifyObservers(String recipient,String subject,String message) {
+
+        for (NotificationObserver observer : observers) {
+            observer.update(recipient,subject,message);
+        }
+    }
+
+    /**
+     * Sends an expiry reminder using the current system date.
+     *
+     * @param rental rental to check
+     * @param customerEmail customer email address
+     * @return true when a reminder is sent
+     */
+    public boolean sendExpiryReminder(Rental rental,String customerEmail) {
+
+        return sendExpiryReminder(rental,customerEmail,LocalDate.now());
+    }
+
+    /**
+     * Sends an expiry reminder when the rental ends within two days.
+     *
+     * A reminder is not sent when the rental is returned,
+     * already expired or ends after more than two days.
+     *
+     * @param rental rental to check
+     * @param customerEmail customer email address
+     * @param currentDate date used to calculate the remaining days
+     * @return true when a reminder is sent
+     * @throws IllegalArgumentException if any required input is invalid
+     */
+    public boolean sendExpiryReminder(Rental rental,String customerEmail,LocalDate currentDate) {
+
+        validateInput(rental,customerEmail,currentDate);
 
         if (!rental.isActive()) {
             return false;
         }
 
-        long remainingDays = ChronoUnit.DAYS.between(
-                currentDate,
-                rental.getEndDate()
-        );
+        long remainingDays = ChronoUnit.DAYS.between(currentDate,rental.getEndDate());
 
-        if (remainingDays < 0
-                || remainingDays > REMINDER_DAYS) {
-
+        if (remainingDays < 0 || remainingDays > REMINDER_DAYS) {
             return false;
         }
 
-        String subject =
-                "Vehicle Rental Expiry Reminder";
+        String subject = "Vehicle Rental Expiry Reminder";
 
-        String message =
-                "Hello "
-                        + rental.getCustomerName()
-                        + ",\nYour rental for vehicle "+ rental.getVehicleId()+ " expires on "+ rental.getEndDate()
-                        + ".\nRemaining days: "+ remainingDays+ ".";
+        String message = "Hello "
+                + rental.getCustomerName()
+                + ",\nYour rental for vehicle "
+                + rental.getVehicleId()
+                + " expires on "
+                + rental.getEndDate()
+                + ".\nRemaining days: "
+                + remainingDays
+                + ".";
 
-        notificationService.sendNotification(customerEmail,subject,message);
+        notifyObservers(customerEmail,subject,message);
 
         return true;
     }
 
-    private void validateInput(
-            Rental rental,
-            String customerEmail,
-            LocalDate currentDate) {
+    /**
+     * Validates the reminder input.
+     *
+     * @param rental rental to validate
+     * @param customerEmail customer email address
+     * @param currentDate current date
+     * @throws IllegalArgumentException if any input is invalid
+     */
+    private void validateInput(Rental rental,String customerEmail,LocalDate currentDate) {
 
         if (rental == null) {
             throw new IllegalArgumentException("Rental is required.");
         }
 
-        if (customerEmail == null|| customerEmail.trim().isEmpty()) {
-
+        if (customerEmail == null || customerEmail.trim().isEmpty()) {
             throw new IllegalArgumentException("Customer email is required.");
         }
 
         if (currentDate == null) {
-            throw new IllegalArgumentException(
-                    "Current date is required."
-            );
+            throw new IllegalArgumentException("Current date is required.");
         }
     }
 }

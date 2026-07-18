@@ -27,6 +27,8 @@ public class CustomerDashboard extends JFrame {
 
     private JButton viewVehiclesButton;
     private JButton rentVehicleButton;
+    private JButton myRentalsButton;
+    private JButton returnVehicleButton;
     private JButton reminderButton;
     private JButton logoutButton;
 
@@ -41,10 +43,11 @@ public class CustomerDashboard extends JFrame {
         this.vehicleService = new VehicleService(vehicleRepository);
 
         NotificationService notificationService = new EmailNotificationService();
+
         this.reminderService = new RentalReminderService(notificationService);
 
         setTitle("Customer Dashboard");
-        setSize(430, 380);
+        setSize(430, 470);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
@@ -63,17 +66,29 @@ public class CustomerDashboard extends JFrame {
         rentVehicleButton.setBounds(90, 120, 240, 35);
         add(rentVehicleButton);
 
+        myRentalsButton = new JButton("My Rentals");
+        myRentalsButton.setBounds(90, 170, 240, 35);
+        add(myRentalsButton);
+
+        returnVehicleButton = new JButton("Return Vehicle");
+        returnVehicleButton.setBounds(90, 220, 240, 35);
+        add(returnVehicleButton);
+
         reminderButton = new JButton("Check Expiry Reminders");
-        reminderButton.setBounds(90, 170, 240, 35);
+        reminderButton.setBounds(90, 270, 240, 35);
         add(reminderButton);
 
         logoutButton = new JButton("Logout");
-        logoutButton.setBounds(90, 220, 240, 35);
+        logoutButton.setBounds(90, 320, 240, 35);
         add(logoutButton);
 
         viewVehiclesButton.addActionListener(e -> new VehicleList(vehicleService));
 
-        rentVehicleButton.addActionListener(e -> new RentVehicle(rentalService, customerService));
+        rentVehicleButton.addActionListener(e -> new RentVehicle(rentalService, customerService, vehicleService));
+
+        myRentalsButton.addActionListener(e -> new CustomerRentals(rentalService, customerService));
+
+        returnVehicleButton.addActionListener(e -> new ReturnVehicle(rentalService, customerService));
 
         reminderButton.addActionListener(e -> checkExpiryReminders());
 
@@ -132,6 +147,7 @@ public class CustomerDashboard extends JFrame {
             JOptionPane.showMessageDialog(this, "Logout Successful");
 
             dispose();
+
             new Login();
         }
     }
