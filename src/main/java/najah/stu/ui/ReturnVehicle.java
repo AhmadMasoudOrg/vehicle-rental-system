@@ -8,6 +8,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 
 import najah.stu.domain.Customer;
 import najah.stu.domain.Rental;
@@ -32,7 +33,7 @@ public class ReturnVehicle extends JFrame {
         setSize(500, 240);
         setLayout(null);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         JLabel title = new JLabel("Return Vehicle");
         title.setFont(new Font("Arial", Font.BOLD, 20));
