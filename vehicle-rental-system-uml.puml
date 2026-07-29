@@ -1,0 +1,93 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "domain" {
+    abstract class User
+    class Customer
+    class Manager
+    class Rental
+    class Vehicle
+    class Car
+    class SUV
+    class Truck
+    enum RentalStatus
+    enum VehicleStatus
+    enum VehicleType
+
+    User <|-- Customer
+    User <|-- Manager
+    Vehicle <|-- Car
+    Vehicle <|-- SUV
+    Vehicle <|-- Truck
+    Rental --> RentalStatus
+    Vehicle --> VehicleStatus
+    Vehicle --> VehicleType
+}
+
+package "strategy" {
+    interface PricingStrategy {
+        + calculateCost(rentalDays : long, dailyRate : double) : double
+    }
+
+    class CarPricingStrategy
+    class SuvPricingStrategy
+    class TruckPricingStrategy
+
+    PricingStrategy <|.. CarPricingStrategy
+    PricingStrategy <|.. SuvPricingStrategy
+    PricingStrategy <|.. TruckPricingStrategy
+}
+
+package "repository" {
+    class CustomerRepository
+    class ManagerRepository
+    class RentalRepository
+    class VehicleRepository
+}
+
+package "service" {
+    class CustomerService
+    class ManagerService
+    class VehicleService
+    class RentalService
+    class RentalReminderService
+}
+
+package "notification" {
+    interface NotificationService
+    class EmailNotificationService
+    NotificationService <|.. EmailNotificationService
+}
+
+package "observer" {
+    interface NotificationObserver
+    class EmailNotificationObserver
+    NotificationObserver <|.. EmailNotificationObserver
+}
+
+Vehicle --> PricingStrategy : uses
+Car --> CarPricingStrategy
+SUV --> SuvPricingStrategy
+Truck --> TruckPricingStrategy
+
+CustomerRepository --> Customer
+ManagerRepository --> Manager
+RentalRepository --> Rental
+VehicleRepository --> Vehicle
+
+CustomerService --> CustomerRepository
+ManagerService --> ManagerRepository
+VehicleService --> VehicleRepository
+RentalService --> VehicleRepository
+RentalService --> RentalRepository
+RentalService --> CustomerService
+
+RentalReminderService o-- NotificationObserver
+EmailNotificationObserver --> NotificationService
+RentalReminderService --> Rental
+
+Rental --> Vehicle : vehicleId
+Rental --> Customer : customerName
+@enduml

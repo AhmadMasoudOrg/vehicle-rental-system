@@ -1,52 +1,54 @@
 package najah.stu.service;
+
 import najah.stu.domain.Manager;
+import najah.stu.repository.ManagerRepository;
+
 public class ManagerService {
-    private Manager manager;
-    private boolean loggedIn;
+
+    private ManagerRepository managerRepository;
+    private Manager loggedInManager;
 
     public ManagerService() {
-        manager = new Manager("admin", "1234");
-        loggedIn = false;
+        managerRepository = new ManagerRepository();
+        loggedInManager = null;
     }
-  
-    
-    
+
     public boolean login(String username, String password) {
 
         if (username == null || password == null) {
             return false;
         }
 
-        if (manager.getUsername().equals(username)
-                && manager.getPassword().equals(password)) {
+        Manager manager = managerRepository.findByUsername(username);
 
-            loggedIn = true;
+        if (manager != null &&
+                manager.getPassword().equals(password)) {
+
+            loggedInManager = manager;
             return true;
         }
 
-        
-        
-        
         return false;
     }
 
     public void logout() {
-        loggedIn = false;
+        loggedInManager = null;
     }
 
     public boolean isLoggedIn() {
-        return loggedIn;
+        return loggedInManager != null;
     }
 
-    
     public void requireLogin() {
-        if (!loggedIn) {
-            throw new IllegalStateException("Manager must be logged in to perform this action.");
+
+        if (!isLoggedIn()) {
+            throw new IllegalStateException(
+                    "Manager must be logged in to perform this action."
+            );
         }
-        
-        
     }
-    
-    
-    
+
+    public Manager getLoggedInManager() {
+        return loggedInManager;
+    }
 }

@@ -1,6 +1,8 @@
 package najah.stu.ui;
 
 import javax.swing.*;
+
+import najah.stu.service.CustomerService;
 import najah.stu.service.ManagerService;
 
 public class Login extends JFrame {
@@ -10,10 +12,12 @@ public class Login extends JFrame {
     private JButton loginButton;
 
     public ManagerService managerService;
+    public CustomerService customerService;
 
     public Login() {
 
         managerService = new ManagerService();
+        customerService = new CustomerService();
 
         setTitle("Vehicle Rental System - Login");
         setSize(400, 250);
@@ -46,16 +50,24 @@ public class Login extends JFrame {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
 
-            if (managerService.login(username, password)) {
-                dispose();
-                new ManagerDashboard();
-                 JOptionPane.showMessageDialog(this, "Login Successful");
-            } else {
-                JOptionPane.showMessageDialog(this, "Invalid Username or Password");
+            if(managerService.login(username,password)){
+
+            dispose();
+            new ManagerDashboard(managerService);
+
+            }else if(customerService.login(username,password)){
+
+            dispose();
+            new CustomerDashboard(customerService);
+
+            }else{
+
+                JOptionPane.showMessageDialog(this,"Invalid Login");
+
             }
 
         });
 
         setVisible(true);
-    }
+        }
 }
