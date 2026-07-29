@@ -13,26 +13,19 @@ import najah.stu.exception.VehicleNotFoundException;
 import najah.stu.repository.RentalRepository;
 import najah.stu.repository.VehicleRepository;
 
-/**
- * Provides the main operations related to vehicle rentals.
- *
- * This service allows customers to rent vehicles,
- * return vehicles and calculate rental costs.
- */
+
 public class RentalService {
 
     public static final long MIN_RENTAL_DAYS = 1;
     public static final long MAX_RENTAL_DAYS = 30;
     public static final double LATE_PENALTY_PER_DAY = 10.0;
+    private static final String VEHICLE_NOT_FOUND_MESSAGE = "Vehicle not found with id: ";
 
     private final VehicleRepository vehicleRepository;
     private final RentalRepository rentalRepository;
     private final CustomerService customerService;
 
-    /**
-     * Creates a rental service using the default repositories
-     * and customer service.
-     */
+   
     public RentalService() {
 
         this(
@@ -42,13 +35,7 @@ public class RentalService {
         );
     }
 
-    /**
-     * Creates a rental service using the provided dependencies.
-     *
-     * @param vehicleRepository repository used to access vehicles
-     * @param rentalRepository repository used to access rentals
-     * @param customerService service used to verify customer login
-     */
+   
     public RentalService(VehicleRepository vehicleRepository,
                          RentalRepository rentalRepository,
                          CustomerService customerService) {
@@ -58,19 +45,7 @@ public class RentalService {
         this.customerService = customerService;
     }
 
-    /**
-     * Rents an available vehicle for the logged-in customer.
-     *
-     * @param vehicleId ID of the vehicle
-     * @param customerName name of the customer
-     * @param startDate rental start date
-     * @param endDate rental end date
-     * @return the created rental
-     * @throws IllegalArgumentException if the customer name is empty
-     * @throws InvalidRentalPeriodException if the rental dates are invalid
-     * @throws VehicleNotFoundException if the vehicle does not exist
-     * @throws VehicleNotAvailableException if the vehicle is already rented
-     */
+    
     public Rental rentVehicle(int vehicleId,
                               String customerName,
                               LocalDate startDate,
@@ -88,7 +63,7 @@ public class RentalService {
 
         Vehicle vehicle = vehicleRepository.findById(vehicleId)
                 .orElseThrow(() -> new VehicleNotFoundException(
-                        "Vehicle not found with id: " + vehicleId
+                        VEHICLE_NOT_FOUND_MESSAGE + vehicleId
                 ));
 
         if (!vehicle.isAvailable()
@@ -118,18 +93,7 @@ public class RentalService {
         return rental;
     }
 
-    /**
-     * Returns a vehicle from an active rental.
-     *
-     * The rental status is changed to returned and the vehicle
-     * becomes available again.
-     *
-     * @param rentalId ID of the rental
-     * @return the returned rental
-     * @throws IllegalArgumentException if the rental does not exist
-     * @throws IllegalStateException if the rental is not active
-     * @throws VehicleNotFoundException if the rented vehicle does not exist
-     */
+   
     public Rental returnVehicle(int rentalId) {
 
         customerService.requireLogin();
@@ -149,7 +113,7 @@ public class RentalService {
 
         Vehicle vehicle = vehicleRepository.findById(rental.getVehicleId())
                 .orElseThrow(() -> new VehicleNotFoundException(
-                        "Vehicle not found with id: "
+                        VEHICLE_NOT_FOUND_MESSAGE
                                 + rental.getVehicleId()
                 ));
 
@@ -165,24 +129,10 @@ public class RentalService {
 
         return rental;
     }
-
-    /**
-     * Returns all rentals stored in the rental repository.
-     *
-     * @return list of all rentals
-     */
     public List<Rental> getAllRentals() {
 
         return rentalRepository.getAllRentals();
     }
-
-    /**
-     * Validates the start and end dates of a rental.
-     *
-     * @param startDate rental start date
-     * @param endDate rental end date
-     * @throws InvalidRentalPeriodException if the dates are invalid
-     */
     private void validateRentalPeriod(LocalDate startDate,
                                       LocalDate endDate) {
 
@@ -222,18 +172,7 @@ public class RentalService {
         }
     }
 
-    /**
-     * Calculates the total cost of a rental.
-     *
-     * The calculation uses the vehicle pricing strategy.
-     * A late penalty is added when the vehicle is returned
-     * after the rental end date.
-     *
-     * @param rentalId ID of the rental
-     * @return total rental cost
-     * @throws IllegalArgumentException if the rental does not exist
-     * @throws VehicleNotFoundException if the vehicle does not exist
-     */
+   
     public double calculateRentalCost(int rentalId) {
 
         customerService.requireLogin();
@@ -245,7 +184,7 @@ public class RentalService {
 
         Vehicle vehicle = vehicleRepository.findById(rental.getVehicleId())
                 .orElseThrow(() -> new VehicleNotFoundException(
-                        "Vehicle not found with id: "
+                        VEHICLE_NOT_FOUND_MESSAGE
                                 + rental.getVehicleId()
                 ));
 
