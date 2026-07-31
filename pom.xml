@@ -16,7 +16,9 @@
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-   
+  
+    <sonar.coverage.exclusions>najah/stu/ui/**</sonar.coverage.exclusions>
+
   <sonar.organization>ahmadmasoudorg</sonar.organization>
 
 </properties>
@@ -68,36 +70,33 @@
   </dependencies>
 
   <build>
-  <plugins>
-        <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.14</version>
-
-            <configuration>
-                <excludes>
-            <exclude>najah/stu/ui/**</exclude>
-            <exclude>najah/stu/app/**</exclude>
-                </excludes>
-          </configuration>
-
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>prepare-agent</goal>
-                    </goals>
-                </execution>
-                <execution>
-                    <id>report</id>
-                    <phase>test</phase>
-                    <goals>
-                        <goal>report</goal>
-                    </goals>
-                </execution>
-            </executions>
-
-        </plugin>
-    </plugins>
+ <plugins>
+    <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.14</version>
+        <configuration>
+            <excludes>
+                <exclude>najah/stu/ui/**</exclude>
+               
+            </excludes>
+        </configuration>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>prepare-agent</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>report</id>
+                <phase>test</phase>
+                <goals>
+                    <goal>report</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+</plugins>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
       <plugin>
